@@ -1,7 +1,7 @@
-package org.example.study.infrastructure.repository.guest
+package org.example.study.repository.guest.impl
 
 import org.example.study.domain.model.Todo
-import org.example.study.domain.repository.TodoRepository
+import org.example.study.repository.guest.TodoRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 

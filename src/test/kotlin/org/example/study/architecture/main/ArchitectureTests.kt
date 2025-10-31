@@ -31,7 +31,8 @@ class ArchitectureTests {
         Konsist
             .scopeFromProject()
             .classes()
-            .withPackage("org.example.study.domain.repository..")
+            .withPackage("org.example.study.repository..")
+            .filter { !it.resideInPackage("..impl..") }
             .assertTrue { it.name.endsWith("Repository") }
     }
 
@@ -40,7 +41,7 @@ class ArchitectureTests {
         Konsist
             .scopeFromProject()
             .assertArchitecture {
-                val repository = Layer("Repository", "org.example.study.domain.repository..")
+                val repository = Layer("Repository", "org.example.study.repository..")
                 val useCase = Layer("UseCase", "org.example.study.usecase..")
                 useCase.dependsOn(repository)
             }
@@ -62,7 +63,7 @@ class ArchitectureTests {
         Konsist
             .scopeFromProject()
             .assertArchitecture {
-                val repository = Layer("Repository", "org.example.study.domain.repository..")
+                val repository = Layer("Repository", "org.example.study.repository..")
                 val model = Layer("Model", "org.example.study.domain.model..")
                 repository.dependsOn(model)
                 model.dependsOnNothing()

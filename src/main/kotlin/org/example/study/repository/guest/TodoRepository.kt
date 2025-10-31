@@ -1,4 +1,4 @@
-package org.example.study.domain.repository
+package org.example.study.repository.guest
 
 import org.example.study.domain.model.Todo
 
