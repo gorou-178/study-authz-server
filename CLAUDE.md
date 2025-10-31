@@ -66,6 +66,48 @@ Keycloakの詳細な設定手順は [KEYCLOAK_SETUP.md](./KEYCLOAK_SETUP.md) を
 
 ## 開発ワークフロー
 
+### リファクタリング手順
+1. **gitブランチを作成**
+   ```bash
+   git checkout -b refactor/feature-name
+   ```
+
+2. **リファクタリングを実施**
+   - コードの改善を行う
+
+3. **テストを動かし影響がないことを確認**
+   ```bash
+   ./gradlew test
+   ```
+
+4. **テストが失敗した場合**
+   - 原因を調査・修正して手順3に戻る
+
+5. **テストが成功した場合、commit**
+   ```bash
+   git add .
+   git commit -m "refactor: 変更内容の説明"
+   ```
+
+6. **アプリケーションを起動して動作することを確認する**
+   ```bash
+   ./gradlew bootRun
+   # 別ターミナルで動作確認
+   curl -s "http://localhost:8080/api/guest/todos" | jq .
+   ```
+
+7. **アプリケーションが正しく動作しない場合**
+   - 原因を調査・修正して手順3に戻る
+
+8. **アプリケーションが正しく動作した場合**
+   - アプリケーションを停止（Ctrl+C）
+   - gitブランチをmainブランチにマージする
+   ```bash
+   git checkout main
+   git merge refactor/feature-name
+   git branch -d refactor/feature-name
+   ```
+
 ## 動作確認
 
 ### リソースサーバーの起動と確認
