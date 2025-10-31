@@ -1,4 +1,4 @@
-package org.example.study.usecase
+package org.example.study.usecase.guest
 
 import org.example.study.domain.model.Todo
 import org.example.study.domain.repository.TodoRepository

@@ -1,7 +1,7 @@
-package org.example.study.controller
+package org.example.study.controller.guest
 
-import org.example.study.controller.dto.TodoResponse
-import org.example.study.usecase.GetRandomTodoUseCase
+import org.example.study.dto.guest.TodoResponse
+import org.example.study.usecase.guest.GetRandomTodoUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

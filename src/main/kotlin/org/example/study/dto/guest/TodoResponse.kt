@@ -1,4 +1,4 @@
-package org.example.study.controller.dto
+package org.example.study.dto.guest
 
 import org.example.study.domain.model.Todo
 import java.time.LocalDateTime
