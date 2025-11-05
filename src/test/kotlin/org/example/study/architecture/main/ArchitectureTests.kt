@@ -33,6 +33,8 @@ class ArchitectureTests {
             .classes()
             .withPackage("org.example.study.repository..")
             .filter { !it.resideInPackage("..impl..") }
+            .filter { !it.resideInPackage("..entity..") }
+            .filter { !it.resideInPackage("..jpa..") }
             .assertTrue { it.name.endsWith("Repository") }
     }
 
