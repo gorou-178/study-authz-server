@@ -15,7 +15,7 @@ data class TodoResponse(
         fun from(todo: Todo): TodoResponse {
             return TodoResponse(
                 id = todo.id,
-                title = todo.title,
+                title = todo.title.value,
                 description = todo.description,
                 createdAt = todo.createdAt,
                 updatedAt = todo.updatedAt,

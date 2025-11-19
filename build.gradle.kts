@@ -42,6 +42,9 @@ dependencies {
     testImplementation("com.lemonappdev:konsist:0.16.1")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("com.microsoft.playwright:playwright:1.40.0")
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+    testImplementation("io.kotest:kotest-property:5.8.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

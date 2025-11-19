@@ -2,6 +2,7 @@ package org.example.study.repository.guest.impl
 
 import org.assertj.core.api.Assertions.assertThat
 import org.example.study.domain.model.Todo
+import org.example.study.domain.model.TodoTitle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -72,14 +73,14 @@ class TodoRepositoryImplTest {
             .extracting("id")
             .containsExactlyInAnyOrder(1L, 2L, 3L, 4L, 5L)
 
-        assertThat(result)
-            .extracting("title")
+        val titles = result.map { it.title.value }
+        assertThat(titles)
             .containsExactlyInAnyOrder(
                 "Spring Bootの学習",
                 "OAuth2の実装",
                 "テストコードの作成",
                 "ドキュメント作成",
-                "Docker環境構築"
+                "Docker環境構築",
             )
     }
 
