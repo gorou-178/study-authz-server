@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.example.study.domain.model.Todo
+import org.example.study.domain.model.TodoDescription
 import org.example.study.domain.model.TodoTitle
 import java.time.LocalDateTime
 
@@ -31,7 +32,7 @@ data class TodoEntity(
         return Todo(
             id = id!!,
             title = TodoTitle.of(title),
-            description = description,
+            description = TodoDescription.of(description),
             createdAt = createdAt,
             updatedAt = updatedAt,
             completedAt = completedAt,
@@ -43,7 +44,7 @@ data class TodoEntity(
             return TodoEntity(
                 id = todo.id,
                 title = todo.title.value,
-                description = todo.description,
+                description = todo.description.value,
                 createdAt = todo.createdAt,
                 updatedAt = todo.updatedAt,
                 completedAt = todo.completedAt,

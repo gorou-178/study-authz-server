@@ -16,7 +16,7 @@ data class TodoResponse(
             return TodoResponse(
                 id = todo.id,
                 title = todo.title.value,
-                description = todo.description,
+                description = todo.description.value,
                 createdAt = todo.createdAt,
                 updatedAt = todo.updatedAt,
                 completedAt = todo.completedAt,

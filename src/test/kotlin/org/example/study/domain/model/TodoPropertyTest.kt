@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.arbitrary.long
-import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
 import java.time.LocalDateTime
 
@@ -53,7 +52,7 @@ class TodoPropertyTest : StringSpec({
     }
 
     "copyメソッドで説明を変更できる" {
-        checkAll(todoArb(), Arb.string(1..500)) { todo, newDescription ->
+        checkAll(todoArb(), todoDescriptionArb()) { todo, newDescription ->
             val updated = todo.copy(description = newDescription)
             updated.description shouldBe newDescription
             updated.id shouldBe todo.id
@@ -82,7 +81,7 @@ class TodoPropertyTest : StringSpec({
 /**
  * TodoTitle用のArbitrary生成関数
  */
-private fun todoTitleArb() = arbitrary {
+private fun todoTitleArb(): Arb<TodoTitle> = arbitrary {
     val title = listOf(
         "Spring Bootの学習",
         "Kotlinのテスト",
@@ -96,9 +95,23 @@ private fun todoTitleArb() = arbitrary {
 }
 
 /**
+ * TodoDescription用のArbitrary生成関数
+ */
+private fun todoDescriptionArb(): Arb<TodoDescription> = arbitrary {
+    val description = listOf(
+        "Spring BootとKotlinでREST APIを作成する",
+        "OAuth2とKeycloakを使った認証・認可の実装",
+        "JUnitとMockKを使ったテストコードの作成",
+        "APIドキュメントとシステム設計書の作成",
+        "PostgreSQLとKeycloakのDocker環境構築",
+    ).random()
+    TodoDescription.of(description)
+}
+
+/**
  * Todo用のArbitrary生成関数
  */
-private fun todoArb() = arbitrary {
+private fun todoArb(): Arb<Todo> = arbitrary {
     val now = LocalDateTime.now()
     val createdAt = now.minusDays(it.random.nextLong(0, 30))
     val updatedAt = createdAt.plusDays(it.random.nextLong(0, 30))
@@ -111,7 +124,7 @@ private fun todoArb() = arbitrary {
     Todo(
         id = it.random.nextLong(1, 1000000),
         title = todoTitleArb().bind(),
-        description = Arb.string(1..500).bind(),
+        description = todoDescriptionArb().bind(),
         createdAt = createdAt,
         updatedAt = updatedAt,
         completedAt = completedAt,
