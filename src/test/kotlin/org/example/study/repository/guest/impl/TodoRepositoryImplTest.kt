@@ -16,34 +16,34 @@ class TodoRepositoryImplTest {
     private lateinit var todoRepository: TodoRepositoryImpl
 
     @Test
-    @DisplayName("findRandomTodo()はnullではないTodoを返す")
-    fun findRandomTodo_returnsNonNullTodo() {
+    @DisplayName("findTodo()はnullではないTodoを返す")
+    fun findTodo_returnsNonNullTodo() {
         // When
-        val result = todoRepository.findRandomTodo()
+        val result = todoRepository.findTodo()
 
         // Then
         assertThat(result).isNotNull
     }
 
     @Test
-    @DisplayName("findRandomTodo()は5件のTodoのいずれかを返す")
-    fun findRandomTodo_returnsOneOfTheFiveTodos() {
+    @DisplayName("findTodo()は5件のTodoのいずれかを返す")
+    fun findTodo_returnsOneOfTheFiveTodos() {
         // Given
         val allTodos = todoRepository.findAll()
 
         // When
-        val result = todoRepository.findRandomTodo()
+        val result = todoRepository.findTodo()
 
         // Then
         assertThat(result).isIn(allTodos)
     }
 
     @Test
-    @DisplayName("findRandomTodo()を複数回呼び出しても毎回Todoを返す")
-    fun findRandomTodo_returnsValidTodoMultipleTimes() {
+    @DisplayName("findTodo()を複数回呼び出しても毎回Todoを返す")
+    fun findTodo_returnsValidTodoMultipleTimes() {
         // When & Then
         repeat(10) {
-            val result = todoRepository.findRandomTodo()
+            val result = todoRepository.findTodo()
             assertThat(result).isNotNull
             assertThat(result).isInstanceOf(Todo::class.java)
         }

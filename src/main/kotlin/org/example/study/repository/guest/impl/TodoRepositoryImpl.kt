@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository
 class TodoRepositoryImpl(
     private val todoJpaRepository: TodoJpaRepository,
 ) : TodoRepository {
-    override fun findRandomTodo(): Todo? {
-        return todoJpaRepository.findRandomTodo()?.toDomainModel()
+    override fun findTodo(): Todo? {
+        return todoJpaRepository.findTodo()?.toDomainModel()
     }
 
     override fun findAll(): List<Todo> {

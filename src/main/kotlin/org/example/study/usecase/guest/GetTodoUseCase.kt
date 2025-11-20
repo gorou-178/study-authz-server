@@ -5,10 +5,10 @@ import org.example.study.repository.guest.TodoRepository
 import org.springframework.stereotype.Service
 
 @Service
-class GetRandomTodoUseCase(
+class GetTodoUseCase(
     private val todoRepository: TodoRepository,
 ) {
     fun execute(): Todo? {
-        return todoRepository.findRandomTodo()
+        return todoRepository.findTodo()
     }
 }
