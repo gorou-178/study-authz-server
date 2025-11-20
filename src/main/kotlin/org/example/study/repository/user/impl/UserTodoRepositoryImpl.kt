@@ -12,7 +12,12 @@ class UserTodoRepositoryImpl(
     private val userTodoJpaRepository: UserTodoJpaRepository,
 ) : UserTodoRepository {
     override fun findByUserId(userId: UUID): List<Todo> {
-        return userTodoJpaRepository.findByUserId(userId).map { it.toDomainModel() }
+        return userTodoJpaRepository.findByUserId(userId)
+            .map { it.toDomainModel() }
+            .sortedWith(
+                compareByDescending<Todo> { it.createdAt }
+                    .then(nullsLast(compareByDescending { it.completedAt })),
+            )
     }
 
     override fun save(

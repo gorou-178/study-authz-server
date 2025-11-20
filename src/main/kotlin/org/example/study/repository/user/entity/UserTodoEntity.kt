@@ -48,7 +48,7 @@ data class UserTodoEntity(
             todo: Todo,
         ): UserTodoEntity {
             return UserTodoEntity(
-                id = todo.id,
+                id = if (todo.id == 0L) null else todo.id,
                 userId = userId,
                 title = todo.title.value,
                 description = todo.description.value,
