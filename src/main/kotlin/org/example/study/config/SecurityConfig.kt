@@ -18,6 +18,7 @@ class SecurityConfig {
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers("/api/guest/**").permitAll()
+                    .requestMatchers("/api/user/**").permitAll()
                     .anyRequest().authenticated()
             }
 
