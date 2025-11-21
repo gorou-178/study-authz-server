@@ -3,6 +3,9 @@ package org.example.study.repository.guest.impl
 import org.assertj.core.api.Assertions.assertThat
 import org.example.study.domain.model.Todo
 import org.example.study.domain.model.TodoTitle
+import org.example.study.repository.guest.TodoRepository
+import org.example.study.repository.guest.findAllTodos
+import org.example.study.repository.guest.findTodo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +16,7 @@ import org.springframework.context.annotation.ComponentScan
 @ComponentScan(basePackages = ["org.example.study.repository.guest"])
 class TodoRepositoryImplTest {
     @Autowired
-    private lateinit var todoRepository: TodoRepositoryImpl
+    private lateinit var todoRepository: TodoRepository
 
     @Test
     @DisplayName("findTodo()はnullではないTodoを返す")
@@ -29,7 +32,7 @@ class TodoRepositoryImplTest {
     @DisplayName("findTodo()は5件のTodoのいずれかを返す")
     fun findTodo_returnsOneOfTheFiveTodos() {
         // Given
-        val allTodos = todoRepository.findAll()
+        val allTodos = todoRepository.findAllTodos()
 
         // When
         val result = todoRepository.findTodo()
@@ -53,7 +56,7 @@ class TodoRepositoryImplTest {
     @DisplayName("findAll()は5件のTodoを返す")
     fun findAll_returnsFiveTodos() {
         // When
-        val result = todoRepository.findAll()
+        val result = todoRepository.findAllTodos()
 
         // Then
         assertThat(result).hasSize(5)
@@ -63,7 +66,7 @@ class TodoRepositoryImplTest {
     @DisplayName("findAll()はすべての期待されるTodoを含む")
     fun findAll_containsAllExpectedTodos() {
         // When
-        val result = todoRepository.findAll()
+        val result = todoRepository.findAllTodos()
 
         // Then
         assertThat(result).hasSize(5)
@@ -88,8 +91,8 @@ class TodoRepositoryImplTest {
     @DisplayName("findAll()は常に同じリストを返す")
     fun findAll_returnsConsistentList() {
         // When
-        val result1 = todoRepository.findAll()
-        val result2 = todoRepository.findAll()
+        val result1 = todoRepository.findAllTodos()
+        val result2 = todoRepository.findAllTodos()
 
         // Then
         assertThat(result1).isEqualTo(result2)
@@ -99,7 +102,7 @@ class TodoRepositoryImplTest {
     @DisplayName("findAll()で取得したTodoはcompletedAtがnullのものとnullでないものを含む")
     fun findAll_containsTodosWithAndWithoutCompletedAt() {
         // When
-        val result = todoRepository.findAll()
+        val result = todoRepository.findAllTodos()
 
         // Then
         val completedTodos = result.filter { it.completedAt != null }

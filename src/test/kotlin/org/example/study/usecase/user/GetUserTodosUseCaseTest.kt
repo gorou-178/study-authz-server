@@ -2,12 +2,14 @@ package org.example.study.usecase.user
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.example.study.domain.model.Todo
 import org.example.study.domain.model.TodoDescription
 import org.example.study.domain.model.TodoTitle
 import org.example.study.repository.user.UserTodoRepository
+import org.example.study.repository.user.findUserTodosSorted
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -22,6 +24,7 @@ class GetUserTodosUseCaseTest {
     fun setUp() {
         userTodoRepository = mockk()
         useCase = GetUserTodosUseCase(userTodoRepository)
+        mockkStatic("org.example.study.repository.user.UserTodoRepositoryKt")
     }
 
     @Test
@@ -49,7 +52,7 @@ class GetUserTodosUseCaseTest {
                 ),
             )
 
-        every { userTodoRepository.findByUserId(userId) } returns expectedTodos
+        every { userTodoRepository.findUserTodosSorted(userId) } returns expectedTodos
 
         // When
         val result = useCase.execute(userId)
@@ -57,7 +60,7 @@ class GetUserTodosUseCaseTest {
         // Then
         assertThat(result).isEqualTo(expectedTodos)
         assertThat(result).hasSize(2)
-        verify(exactly = 1) { userTodoRepository.findByUserId(userId) }
+        verify(exactly = 1) { userTodoRepository.findUserTodosSorted(userId) }
     }
 
     @Test
@@ -65,14 +68,14 @@ class GetUserTodosUseCaseTest {
     fun execute_returnsEmptyListWhenNoTodos() {
         // Given
         val userId = UUID.fromString("00000000-0000-0000-0000-000000000000")
-        every { userTodoRepository.findByUserId(userId) } returns emptyList()
+        every { userTodoRepository.findUserTodosSorted(userId) } returns emptyList()
 
         // When
         val result = useCase.execute(userId)
 
         // Then
         assertThat(result).isEmpty()
-        verify(exactly = 1) { userTodoRepository.findByUserId(userId) }
+        verify(exactly = 1) { userTodoRepository.findUserTodosSorted(userId) }
     }
 
     @Test
@@ -106,8 +109,8 @@ class GetUserTodosUseCaseTest {
                 ),
             )
 
-        every { userTodoRepository.findByUserId(userId1) } returns todos1
-        every { userTodoRepository.findByUserId(userId2) } returns todos2
+        every { userTodoRepository.findUserTodosSorted(userId1) } returns todos1
+        every { userTodoRepository.findUserTodosSorted(userId2) } returns todos2
 
         // When
         val result1 = useCase.execute(userId1)
@@ -117,8 +120,8 @@ class GetUserTodosUseCaseTest {
         assertThat(result1).isEqualTo(todos1)
         assertThat(result2).isEqualTo(todos2)
         assertThat(result1).isNotEqualTo(result2)
-        verify(exactly = 1) { userTodoRepository.findByUserId(userId1) }
-        verify(exactly = 1) { userTodoRepository.findByUserId(userId2) }
+        verify(exactly = 1) { userTodoRepository.findUserTodosSorted(userId1) }
+        verify(exactly = 1) { userTodoRepository.findUserTodosSorted(userId2) }
     }
 
     @Test
@@ -154,7 +157,7 @@ class GetUserTodosUseCaseTest {
                 ),
             )
 
-        every { userTodoRepository.findByUserId(userId) } returns expectedTodos
+        every { userTodoRepository.findUserTodosSorted(userId) } returns expectedTodos
 
         // When
         val result = useCase.execute(userId)
@@ -164,7 +167,7 @@ class GetUserTodosUseCaseTest {
         assertThat(result).containsExactlyElementsOf(expectedTodos)
         assertThat(result.map { it.title.value })
             .containsExactly("Todo 1", "Todo 2", "Todo 3")
-        verify(exactly = 1) { userTodoRepository.findByUserId(userId) }
+        verify(exactly = 1) { userTodoRepository.findUserTodosSorted(userId) }
     }
 
     @Test
@@ -211,7 +214,7 @@ class GetUserTodosUseCaseTest {
                 ),
             )
 
-        every { userTodoRepository.findByUserId(userId) } returns sortedTodos
+        every { userTodoRepository.findUserTodosSorted(userId) } returns sortedTodos
 
         // When
         val result = useCase.execute(userId)
@@ -227,6 +230,6 @@ class GetUserTodosUseCaseTest {
                 "古いTodo",
                 "古いTodo(未完了)",
             )
-        verify(exactly = 1) { userTodoRepository.findByUserId(userId) }
+        verify(exactly = 1) { userTodoRepository.findUserTodosSorted(userId) }
     }
 }

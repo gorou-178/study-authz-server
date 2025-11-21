@@ -4,8 +4,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.example.study.domain.model.Todo
 import org.example.study.domain.model.TodoDescription
 import org.example.study.domain.model.TodoTitle
+import org.example.study.repository.user.UserTodoRepository
 import org.example.study.repository.user.entity.UserTodoEntity
-import org.example.study.repository.user.jpa.UserTodoJpaRepository
+import org.example.study.repository.user.findUserTodosSorted
+import org.example.study.repository.user.saveTodo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -19,16 +21,13 @@ import java.util.UUID
 @ComponentScan(basePackages = ["org.example.study.repository.user"])
 class UserTodoRepositoryImplTest {
     @Autowired
-    private lateinit var userTodoRepository: UserTodoRepositoryImpl
-
-    @Autowired
-    private lateinit var userTodoJpaRepository: UserTodoJpaRepository
+    private lateinit var userTodoRepository: UserTodoRepository
 
     private val testUserId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000")
 
     @BeforeEach
     fun setUp() {
-        userTodoJpaRepository.deleteAll()
+        userTodoRepository.deleteAll()
     }
 
     @Test
@@ -64,10 +63,10 @@ class UserTodoRepositoryImplTest {
                 completedAt = null,
             )
 
-        userTodoJpaRepository.saveAll(listOf(todo1, todo2, todo3))
+        userTodoRepository.saveAll(listOf(todo1, todo2, todo3))
 
         // When
-        val result = userTodoRepository.findByUserId(testUserId)
+        val result = userTodoRepository.findUserTodosSorted(testUserId)
 
         // Then
         assertThat(result).hasSize(3)
@@ -110,10 +109,10 @@ class UserTodoRepositoryImplTest {
                 completedAt = now.minusDays(1),
             )
 
-        userTodoJpaRepository.saveAll(listOf(todo1, todo2, todo3))
+        userTodoRepository.saveAll(listOf(todo1, todo2, todo3))
 
         // When
-        val result = userTodoRepository.findByUserId(testUserId)
+        val result = userTodoRepository.findUserTodosSorted(testUserId)
 
         // Then
         assertThat(result).hasSize(3)
@@ -165,10 +164,10 @@ class UserTodoRepositoryImplTest {
                 completedAt = now.minusDays(2),
             )
 
-        userTodoJpaRepository.saveAll(listOf(todo1, todo2, todo3, todo4))
+        userTodoRepository.saveAll(listOf(todo1, todo2, todo3, todo4))
 
         // When
-        val result = userTodoRepository.findByUserId(testUserId)
+        val result = userTodoRepository.findUserTodosSorted(testUserId)
 
         // Then
         assertThat(result).hasSize(4)
@@ -185,7 +184,7 @@ class UserTodoRepositoryImplTest {
     @DisplayName("findByUserId()は空のリストを返す場合がある")
     fun findByUserId_returnsEmptyListWhenNoTodosExist() {
         // When
-        val result = userTodoRepository.findByUserId(testUserId)
+        val result = userTodoRepository.findUserTodosSorted(testUserId)
 
         // Then
         assertThat(result).isEmpty()
@@ -217,10 +216,10 @@ class UserTodoRepositoryImplTest {
                 completedAt = null,
             )
 
-        userTodoJpaRepository.saveAll(listOf(todo1, todo2))
+        userTodoRepository.saveAll(listOf(todo1, todo2))
 
         // When
-        val result = userTodoRepository.findByUserId(testUserId)
+        val result = userTodoRepository.findUserTodosSorted(testUserId)
 
         // Then
         assertThat(result).hasSize(1)
@@ -242,14 +241,14 @@ class UserTodoRepositoryImplTest {
             )
 
         // When
-        val saved = userTodoRepository.save(testUserId, todo)
+        val saved = userTodoRepository.saveTodo(testUserId, todo)
 
         // Then
         assertThat(saved.id).isNotEqualTo(0L)
         assertThat(saved.title.value).isEqualTo("新しいTodo")
         assertThat(saved.description.value).isEqualTo("説明")
 
-        val found = userTodoRepository.findByUserId(testUserId)
+        val found = userTodoRepository.findUserTodosSorted(testUserId)
         assertThat(found).hasSize(1)
         assertThat(found[0].title.value).isEqualTo("新しいTodo")
     }

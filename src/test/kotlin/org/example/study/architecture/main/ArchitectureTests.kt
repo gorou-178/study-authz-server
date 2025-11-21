@@ -23,6 +23,7 @@ class ArchitectureTests {
             .scopeFromProject()
             .classes()
             .withPackage("org.example.study.usecase..")
+            .filter { !it.name.endsWith("Test") }
             .assertTrue { it.name.endsWith("UseCase") }
     }
 
