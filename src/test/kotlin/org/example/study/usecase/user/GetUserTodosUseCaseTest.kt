@@ -38,6 +38,7 @@ class GetUserTodosUseCaseTest {
                     id = 1L,
                     title = TodoTitle.of("プロジェクト計画"),
                     description = TodoDescription.of("プロジェクトの計画を立てる"),
+                    isCompleted = true,
                     createdAt = LocalDateTime.now().minusDays(7),
                     updatedAt = LocalDateTime.now().minusDays(7),
                     completedAt = LocalDateTime.now().minusDays(6),
@@ -46,6 +47,7 @@ class GetUserTodosUseCaseTest {
                     id = 2L,
                     title = TodoTitle.of("データベース設計"),
                     description = TodoDescription.of("ER図を作成してテーブル設計を行う"),
+                    isCompleted = false,
                     createdAt = LocalDateTime.now().minusDays(5),
                     updatedAt = LocalDateTime.now().minusDays(3),
                     completedAt = null,
@@ -91,6 +93,7 @@ class GetUserTodosUseCaseTest {
                     id = 1L,
                     title = TodoTitle.of("ユーザー1のTodo"),
                     description = TodoDescription.of("説明1"),
+                    isCompleted = false,
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                     completedAt = null,
@@ -103,6 +106,7 @@ class GetUserTodosUseCaseTest {
                     id = 2L,
                     title = TodoTitle.of("ユーザー2のTodo"),
                     description = TodoDescription.of("説明2"),
+                    isCompleted = false,
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                     completedAt = null,
@@ -135,6 +139,7 @@ class GetUserTodosUseCaseTest {
                     id = 1L,
                     title = TodoTitle.of("Todo 1"),
                     description = TodoDescription.of("説明 1"),
+                    isCompleted = false,
                     createdAt = LocalDateTime.now().minusDays(3),
                     updatedAt = LocalDateTime.now().minusDays(3),
                     completedAt = null,
@@ -143,6 +148,7 @@ class GetUserTodosUseCaseTest {
                     id = 2L,
                     title = TodoTitle.of("Todo 2"),
                     description = TodoDescription.of("説明 2"),
+                    isCompleted = false,
                     createdAt = LocalDateTime.now().minusDays(2),
                     updatedAt = LocalDateTime.now().minusDays(2),
                     completedAt = null,
@@ -151,6 +157,7 @@ class GetUserTodosUseCaseTest {
                     id = 3L,
                     title = TodoTitle.of("Todo 3"),
                     description = TodoDescription.of("説明 3"),
+                    isCompleted = true,
                     createdAt = LocalDateTime.now().minusDays(1),
                     updatedAt = LocalDateTime.now().minusDays(1),
                     completedAt = LocalDateTime.now(),
@@ -181,36 +188,40 @@ class GetUserTodosUseCaseTest {
         val sortedTodos =
             listOf(
                 Todo(
+                    id = 4L,
+                    title = TodoTitle.of("最新のTodo(未完了)"),
+                    description = TodoDescription.of("createdAt = 1日前 未完了"),
+                    isCompleted = false,
+                    createdAt = now.minusDays(1),
+                    updatedAt = now.minusDays(1),
+                    completedAt = null,
+                ),
+                Todo(
+                    id = 2L,
+                    title = TodoTitle.of("古いTodo(未完了)"),
+                    description = TodoDescription.of("createdAt = 3日前 未完了"),
+                    isCompleted = false,
+                    createdAt = now.minusDays(3),
+                    updatedAt = now.minusDays(3),
+                    completedAt = null,
+                ),
+                Todo(
                     id = 3L,
-                    title = TodoTitle.of("最新のTodo"),
-                    description = TodoDescription.of("createdAt = 1日前 completedAt = 1日前"),
+                    title = TodoTitle.of("最新のTodo(完了)"),
+                    description = TodoDescription.of("createdAt = 1日前 完了"),
+                    isCompleted = true,
                     createdAt = now.minusDays(1),
                     updatedAt = now.minusDays(1),
                     completedAt = now.minusDays(1),
                 ),
                 Todo(
-                    id = 4L,
-                    title = TodoTitle.of("最新のTodo(未完了)"),
-                    description = TodoDescription.of("createdAt = 1日前 completedAt = null"),
-                    createdAt = now.minusDays(1),
-                    updatedAt = now.minusDays(1),
-                    completedAt = null,
-                ),
-                Todo(
                     id = 1L,
-                    title = TodoTitle.of("古いTodo"),
-                    description = TodoDescription.of("createdAt = 3日前 completedAt = 2日前"),
+                    title = TodoTitle.of("古いTodo(完了)"),
+                    description = TodoDescription.of("createdAt = 3日前 完了"),
+                    isCompleted = true,
                     createdAt = now.minusDays(3),
                     updatedAt = now.minusDays(3),
                     completedAt = now.minusDays(2),
-                ),
-                Todo(
-                    id = 2L,
-                    title = TodoTitle.of("古いTodo(未完了)"),
-                    description = TodoDescription.of("createdAt = 3日前 completedAt = null"),
-                    createdAt = now.minusDays(3),
-                    updatedAt = now.minusDays(3),
-                    completedAt = null,
                 ),
             )
 
@@ -222,13 +233,13 @@ class GetUserTodosUseCaseTest {
         // Then
         assertThat(result).hasSize(4)
         assertThat(result).containsExactlyElementsOf(sortedTodos)
-        // ソート順を検証: createdAtの降順、その後completedAtの降順（nullは最後）
+        // ソート順を検証: isCompleted ASC → createdAtの降順
         assertThat(result.map { it.title.value })
             .containsExactly(
-                "最新のTodo",
                 "最新のTodo(未完了)",
-                "古いTodo",
                 "古いTodo(未完了)",
+                "最新のTodo(完了)",
+                "古いTodo(完了)",
             )
         verify(exactly = 1) { userTodoRepository.findUserTodosSorted(userId) }
     }

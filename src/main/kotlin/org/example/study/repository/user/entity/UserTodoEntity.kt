@@ -25,6 +25,8 @@ data class UserTodoEntity(
     @Column(nullable = false)
     val description: String,
     @Column(nullable = false)
+    val isCompleted: Boolean = false,
+    @Column(nullable = false)
     val createdAt: LocalDateTime,
     @Column(nullable = false)
     val updatedAt: LocalDateTime,
@@ -36,6 +38,7 @@ data class UserTodoEntity(
             id = id!!,
             title = TodoTitle.of(title),
             description = TodoDescription.of(description),
+            isCompleted = isCompleted,
             createdAt = createdAt,
             updatedAt = updatedAt,
             completedAt = completedAt,
@@ -52,6 +55,7 @@ data class UserTodoEntity(
                 userId = userId,
                 title = todo.title.value,
                 description = todo.description.value,
+                isCompleted = todo.isCompleted,
                 createdAt = todo.createdAt,
                 updatedAt = todo.updatedAt,
                 completedAt = todo.completedAt,

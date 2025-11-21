@@ -10,6 +10,14 @@ import org.springframework.stereotype.Repository
 interface TodoRepository : JpaRepository<TodoEntity, Long> {
     @Query(value = "SELECT * FROM todos ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
     fun findRandomTodoEntity(): TodoEntity?
+
+    @Query(
+        """
+        SELECT t FROM TodoEntity t
+        ORDER BY t.isCompleted ASC, t.createdAt DESC
+        """,
+    )
+    fun findAllSorted(): List<TodoEntity>
 }
 
 fun TodoRepository.findTodo(): Todo? {
@@ -17,5 +25,5 @@ fun TodoRepository.findTodo(): Todo? {
 }
 
 fun TodoRepository.findAllTodos(): List<Todo> {
-    return findAll().map { it.toDomainModel() }
+    return findAllSorted().map { it.toDomainModel() }
 }
