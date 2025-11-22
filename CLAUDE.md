@@ -128,20 +128,27 @@ curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/api/pro/todos"
 ### 実装済みAPI
 
 #### 認可不要なAPI
-- `GET /api/guest/todos` - ソート順で先頭のTodo（未完了の最新タスク）を1件返す
+- `GET /api/guest/todos` - ソート順で先頭のTodo（未完了の最新タスク）を配列で返す
   - 認証不要
   - ソート条件: `isCompleted ASC, createdAt DESC`（未完了タスクを優先、その中で最新順）
-  - レスポンス例:
+  - タスクが存在する場合は1件の配列、存在しない場合は空の配列を返す
+  - レスポンス例（1件の場合）:
     ```json
-    {
-      "id": 4,
-      "title": "ドキュメント作成",
-      "description": "API仕様書とREADMEの作成",
-      "isCompleted": false,
-      "createdAt": "2025-10-26T15:00:00",
-      "updatedAt": "2025-10-29T15:00:00",
-      "completedAt": null
-    }
+    [
+      {
+        "id": 4,
+        "title": "ドキュメント作成",
+        "description": "API仕様書とREADMEの作成",
+        "isCompleted": false,
+        "createdAt": "2025-10-26T15:00:00",
+        "updatedAt": "2025-10-29T15:00:00",
+        "completedAt": null
+      }
+    ]
+    ```
+  - レスポンス例（0件の場合）:
+    ```json
+    []
     ```
 
 #### 認可が必要なAPI（未実装）
