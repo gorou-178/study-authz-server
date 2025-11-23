@@ -19,37 +19,42 @@ class TodoRepositoryImplTest {
     private lateinit var todoRepository: TodoRepository
 
     @Test
-    @DisplayName("findTodo()はnullではないTodoを返す")
-    fun findTodo_returnsNonNullTodo() {
+    @DisplayName("findTodo()はソート順で先頭の1件を返す")
+    fun findTodo_returnsFirstSortedTodo() {
+        // When
+        val result = todoRepository.findTodo()
+        val allTodos = todoRepository.findAllTodos()
+
+        // Then
+        assertThat(result).isNotNull
+        assertThat(result).isEqualTo(allTodos.first())
+    }
+
+    @Test
+    @DisplayName("findTodo()は未完了の最新Todoを返す")
+    fun findTodo_returnsLatestIncompleteTodo() {
         // When
         val result = todoRepository.findTodo()
 
         // Then
         assertThat(result).isNotNull
+        // 未完了タスクが優先される
+        assertThat(result!!.isCompleted).isFalse
+        // ドキュメント作成が最新の未完了タスク
+        assertThat(result.title.value).isEqualTo("ドキュメント作成")
     }
 
     @Test
-    @DisplayName("findTodo()は5件のTodoのいずれかを返す")
-    fun findTodo_returnsOneOfTheFiveTodos() {
-        // Given
-        val allTodos = todoRepository.findAllTodos()
-
+    @DisplayName("findTodo()を複数回呼び出しても同じTodoを返す")
+    fun findTodo_returnsConsistentTodo() {
         // When
-        val result = todoRepository.findTodo()
+        val result1 = todoRepository.findTodo()
+        val result2 = todoRepository.findTodo()
 
         // Then
-        assertThat(result).isIn(allTodos)
-    }
-
-    @Test
-    @DisplayName("findTodo()を複数回呼び出しても毎回Todoを返す")
-    fun findTodo_returnsValidTodoMultipleTimes() {
-        // When & Then
-        repeat(10) {
-            val result = todoRepository.findTodo()
-            assertThat(result).isNotNull
-            assertThat(result).isInstanceOf(Todo::class.java)
-        }
+        assertThat(result1).isNotNull
+        assertThat(result2).isNotNull
+        assertThat(result1).isEqualTo(result2)
     }
 
     @Test
@@ -96,6 +101,30 @@ class TodoRepositoryImplTest {
 
         // Then
         assertThat(result1).isEqualTo(result2)
+    }
+
+    @Test
+    @DisplayName("findAll()はisCompleted ASC, createdAt DESCでソートされている")
+    fun findAll_returnsSortedByCompletedAndCreatedAt() {
+        // When
+        val result = todoRepository.findAllTodos()
+
+        // Then
+        assertThat(result).hasSize(5)
+
+        // 未完了タスクが先（最新順）
+        assertThat(result[0].title.value).isEqualTo("ドキュメント作成") // 未完了、2日前
+        assertThat(result[0].isCompleted).isFalse
+        assertThat(result[1].title.value).isEqualTo("OAuth2の実装") // 未完了、4日前
+        assertThat(result[1].isCompleted).isFalse
+        assertThat(result[2].title.value).isEqualTo("Spring Bootの学習") // 未完了、5日前
+        assertThat(result[2].isCompleted).isFalse
+
+        // 完了タスクが後（最新順）
+        assertThat(result[3].title.value).isEqualTo("テストコードの作成") // 完了、3日前
+        assertThat(result[3].isCompleted).isTrue
+        assertThat(result[4].title.value).isEqualTo("Docker環境構築") // 完了、6日前
+        assertThat(result[4].isCompleted).isTrue
     }
 
     @Test

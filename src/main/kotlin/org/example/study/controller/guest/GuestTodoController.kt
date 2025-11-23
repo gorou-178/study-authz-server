@@ -13,11 +13,9 @@ class GuestTodoController(
     private val getTodoUseCase: GetTodoUseCase,
 ) {
     @GetMapping("/todos")
-    fun getTodo(): ResponseEntity<TodoResponse> {
-        val todo =
-            getTodoUseCase.execute()
-                ?: return ResponseEntity.notFound().build()
-
-        return ResponseEntity.ok(TodoResponse.from(todo))
+    fun getTodo(): ResponseEntity<List<TodoResponse>> {
+        val todos = getTodoUseCase.execute()
+        val response = todos.map { TodoResponse.from(it) }
+        return ResponseEntity.ok(response)
     }
 }

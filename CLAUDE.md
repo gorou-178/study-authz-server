@@ -34,7 +34,10 @@
 
 ### Spring Bootの開発方針
 - 設定はyaml形式にする
-- 
+- Spring Data JPAの機能を最大限活用し、極力SQLを書かない
+  - メソッド命名規則（findBy...、OrderBy...など）を使用してクエリを自動生成
+  - 複雑なクエリが必要な場合のみ`@Query`アノテーションを使用
+  - Native SQLは特別な理由がない限り使用しない（例外: ランダム取得など） 
 
 ## Keycloak設定
 
@@ -125,18 +128,27 @@ curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/api/pro/todos"
 ### 実装済みAPI
 
 #### 認可不要なAPI
-- `GET /api/guest/todos` - ランダムなTodoを1件返す
+- `GET /api/guest/todos` - ソート順で先頭のTodo（未完了の最新タスク）を配列で返す
   - 認証不要
-  - レスポンス例:
+  - ソート条件: `isCompleted ASC, createdAt DESC`（未完了タスクを優先、その中で最新順）
+  - タスクが存在する場合は1件の配列、存在しない場合は空の配列を返す
+  - レスポンス例（1件の場合）:
     ```json
-    {
-      "id": 1,
-      "title": "Spring Bootの学習",
-      "description": "Spring BootとKotlinでREST APIを作成する",
-      "createdAt": "2025-10-26T15:00:00",
-      "updatedAt": "2025-10-29T15:00:00",
-      "completedAt": null
-    }
+    [
+      {
+        "id": 4,
+        "title": "ドキュメント作成",
+        "description": "API仕様書とREADMEの作成",
+        "isCompleted": false,
+        "createdAt": "2025-10-26T15:00:00",
+        "updatedAt": "2025-10-29T15:00:00",
+        "completedAt": null
+      }
+    ]
+    ```
+  - レスポンス例（0件の場合）:
+    ```json
+    []
     ```
 
 #### 認可が必要なAPI（未実装）

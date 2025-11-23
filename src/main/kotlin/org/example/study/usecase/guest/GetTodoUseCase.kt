@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service
 class GetTodoUseCase(
     private val todoRepository: TodoRepository,
 ) {
-    fun execute(): Todo? {
-        return todoRepository.findTodo()
+    fun execute(): List<Todo> {
+        val todo = todoRepository.findTodo()
+        return if (todo != null) listOf(todo) else emptyList()
     }
 }

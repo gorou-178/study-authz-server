@@ -31,7 +31,7 @@ class UserTodoRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("findByUserId()はcreatedAtの降順でソートされたTodoリストを返す")
+    @DisplayName("findByUserId()はisCompleted=false→createdAtの降順でソートされたTodoリストを返す")
     fun findByUserId_returnsSortedByCreatedAtDescending() {
         // Given
         val now = LocalDateTime.now()
@@ -40,6 +40,7 @@ class UserTodoRepositoryImplTest {
                 userId = testUserId,
                 title = "Todo 1",
                 description = "最も古い",
+                isCompleted = false,
                 createdAt = now.minusDays(3),
                 updatedAt = now.minusDays(3),
                 completedAt = null,
@@ -49,6 +50,7 @@ class UserTodoRepositoryImplTest {
                 userId = testUserId,
                 title = "Todo 2",
                 description = "中間",
+                isCompleted = false,
                 createdAt = now.minusDays(2),
                 updatedAt = now.minusDays(2),
                 completedAt = null,
@@ -58,6 +60,7 @@ class UserTodoRepositoryImplTest {
                 userId = testUserId,
                 title = "Todo 3",
                 description = "最新",
+                isCompleted = false,
                 createdAt = now.minusDays(1),
                 updatedAt = now.minusDays(1),
                 completedAt = null,
@@ -75,7 +78,7 @@ class UserTodoRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("findByUserId()は同じcreatedAtの場合、completedAtの降順でソートされる")
+    @DisplayName("findByUserId()は未完了タスクが完了タスクより優先される")
     fun findByUserId_returnsSortedByCompletedAtDescendingWhenCreatedAtIsSame() {
         // Given
         val now = LocalDateTime.now()
@@ -85,7 +88,8 @@ class UserTodoRepositoryImplTest {
             UserTodoEntity(
                 userId = testUserId,
                 title = "Todo 1",
-                description = "completedAt = null",
+                description = "未完了",
+                isCompleted = false,
                 createdAt = sameCreatedAt,
                 updatedAt = sameCreatedAt,
                 completedAt = null,
@@ -94,7 +98,8 @@ class UserTodoRepositoryImplTest {
             UserTodoEntity(
                 userId = testUserId,
                 title = "Todo 2",
-                description = "completedAt = 2日前",
+                description = "完了済み",
+                isCompleted = true,
                 createdAt = sameCreatedAt,
                 updatedAt = sameCreatedAt,
                 completedAt = now.minusDays(2),
@@ -103,7 +108,8 @@ class UserTodoRepositoryImplTest {
             UserTodoEntity(
                 userId = testUserId,
                 title = "Todo 3",
-                description = "completedAt = 1日前",
+                description = "完了済み",
+                isCompleted = true,
                 createdAt = sameCreatedAt,
                 updatedAt = sameCreatedAt,
                 completedAt = now.minusDays(1),
@@ -116,9 +122,9 @@ class UserTodoRepositoryImplTest {
 
         // Then
         assertThat(result).hasSize(3)
-        // completedAtの降順（nullは最後）: 1日前 -> 2日前 -> null
+        // isCompleted ASCが優先されるため、未完了が先: Todo 1 -> Todo 2 -> Todo 3
         assertThat(result.map { it.title.value })
-            .containsExactly("Todo 3", "Todo 2", "Todo 1")
+            .containsExactly("Todo 1", "Todo 2", "Todo 3")
     }
 
     @Test
@@ -131,7 +137,8 @@ class UserTodoRepositoryImplTest {
             UserTodoEntity(
                 userId = testUserId,
                 title = "Todo 1",
-                description = "最新のcreatedAt completedAt = null",
+                description = "最新のcreatedAt 未完了",
+                isCompleted = false,
                 createdAt = now.minusDays(1),
                 updatedAt = now,
                 completedAt = null,
@@ -140,7 +147,8 @@ class UserTodoRepositoryImplTest {
             UserTodoEntity(
                 userId = testUserId,
                 title = "Todo 2",
-                description = "最新のcreatedAt completedAt = 1日前",
+                description = "最新のcreatedAt 完了済み",
+                isCompleted = true,
                 createdAt = now.minusDays(1),
                 updatedAt = now,
                 completedAt = now.minusDays(1),
@@ -149,7 +157,8 @@ class UserTodoRepositoryImplTest {
             UserTodoEntity(
                 userId = testUserId,
                 title = "Todo 3",
-                description = "古いcreatedAt completedAt = null",
+                description = "古いcreatedAt 未完了",
+                isCompleted = false,
                 createdAt = now.minusDays(3),
                 updatedAt = now,
                 completedAt = null,
@@ -158,7 +167,8 @@ class UserTodoRepositoryImplTest {
             UserTodoEntity(
                 userId = testUserId,
                 title = "Todo 4",
-                description = "古いcreatedAt completedAt = 2日前",
+                description = "古いcreatedAt 完了済み",
+                isCompleted = true,
                 createdAt = now.minusDays(3),
                 updatedAt = now,
                 completedAt = now.minusDays(2),
@@ -172,12 +182,12 @@ class UserTodoRepositoryImplTest {
         // Then
         assertThat(result).hasSize(4)
         // 期待される順序:
-        // 1. Todo 2 (createdAt: 1日前, completedAt: 1日前)
-        // 2. Todo 1 (createdAt: 1日前, completedAt: null)
-        // 3. Todo 4 (createdAt: 3日前, completedAt: 2日前)
-        // 4. Todo 3 (createdAt: 3日前, completedAt: null)
+        // 1. Todo 1 (isCompleted: false, createdAt: 1日前)
+        // 2. Todo 3 (isCompleted: false, createdAt: 3日前)
+        // 3. Todo 2 (isCompleted: true, createdAt: 1日前)
+        // 4. Todo 4 (isCompleted: true, createdAt: 3日前)
         assertThat(result.map { it.title.value })
-            .containsExactly("Todo 2", "Todo 1", "Todo 4", "Todo 3")
+            .containsExactly("Todo 1", "Todo 3", "Todo 2", "Todo 4")
     }
 
     @Test
@@ -202,6 +212,7 @@ class UserTodoRepositoryImplTest {
                 userId = testUserId,
                 title = "Todo for test user",
                 description = "テストユーザーのTodo",
+                isCompleted = false,
                 createdAt = now,
                 updatedAt = now,
                 completedAt = null,
@@ -211,6 +222,7 @@ class UserTodoRepositoryImplTest {
                 userId = otherUserId,
                 title = "Todo for other user",
                 description = "他のユーザーのTodo",
+                isCompleted = false,
                 createdAt = now,
                 updatedAt = now,
                 completedAt = null,
@@ -235,6 +247,7 @@ class UserTodoRepositoryImplTest {
                 id = 0L,
                 title = TodoTitle.of("新しいTodo"),
                 description = TodoDescription.of("説明"),
+                isCompleted = false,
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
                 completedAt = null,
