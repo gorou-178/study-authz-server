@@ -4,18 +4,14 @@ import org.example.study.domain.model.Todo
 import org.example.study.repository.guest.entity.TodoEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 interface TodoRepository : JpaRepository<TodoEntity, Long> {
-    fun findFirstByOrderByIsCompletedAscCreatedAtDesc(): TodoEntity?
-
-    fun findAllByOrderByIsCompletedAscCreatedAtDesc(): List<TodoEntity>
+    fun findAllByCreatedAtAfterOrderByIsCompletedAscCreatedAtDesc(createdAtAfter: LocalDateTime): List<TodoEntity>
 }
 
-fun TodoRepository.findTodo(): Todo? {
-    return findFirstByOrderByIsCompletedAscCreatedAtDesc()?.toDomainModel()
-}
-
-fun TodoRepository.findAllTodos(): List<Todo> {
-    return findAllByOrderByIsCompletedAscCreatedAtDesc().map { it.toDomainModel() }
+fun TodoRepository.findTodosWithinLastMonth(): List<Todo> {
+    val oneMonthAgo = LocalDateTime.now().minusMonths(1)
+    return findAllByCreatedAtAfterOrderByIsCompletedAscCreatedAtDesc(oneMonthAgo).map { it.toDomainModel() }
 }

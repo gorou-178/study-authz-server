@@ -43,17 +43,19 @@ class TodoDescriptionPropertyTest : StringSpec({
     }
 
     "空文字列でTodoDescriptionを作成するとエラー" {
-        val exception = shouldThrow<IllegalArgumentException> {
-            TodoDescription.of("")
-        }
+        val exception =
+            shouldThrow<IllegalArgumentException> {
+                TodoDescription.of("")
+            }
         exception.message shouldContain "1文字以上"
     }
 
     "1001文字以上の説明でTodoDescriptionを作成するとエラー" {
         checkAll(Arb.string(1001..1500)) { longDescription ->
-            val exception = shouldThrow<IllegalArgumentException> {
-                TodoDescription.of(longDescription)
-            }
+            val exception =
+                shouldThrow<IllegalArgumentException> {
+                    TodoDescription.of(longDescription)
+                }
             exception.message shouldContain "1000文字以内"
         }
     }
@@ -137,13 +139,14 @@ class TodoDescriptionPropertyTest : StringSpec({
     }
 
     "複数行の日本語テキストを含む説明を作成できる" {
-        val description = """
+        val description =
+            """
             Spring Bootの学習を進める
 
             - REST APIの作成
             - データベース連携
             - 認証機能の実装
-        """.trimIndent()
+            """.trimIndent()
         val todoDescription = TodoDescription.of(description)
         todoDescription.value shouldBe description
     }
@@ -158,31 +161,33 @@ class TodoDescriptionPropertyTest : StringSpec({
 /**
  * 有効なTodoDescription用のArbitrary生成関数
  */
-private fun validTodoDescriptionArb() = arbitrary {
-    // 有効な文字のArbitrary
-    val validChars = Arb.choice(
-        // 半角英数字
-        Arb.char('a'..'z'),
-        Arb.char('A'..'Z'),
-        Arb.char('0'..'9'),
-        // ひらがな
-        Arb.char('\u3040'..'\u309F'),
-        // カタカナ(全角)
-        Arb.char('\u30A0'..'\u30FF'),
-        // カタカナ(半角)
-        Arb.char('\uFF65'..'\uFF9F'),
-        // 日本語漢字（一部）
-        Arb.choice(
-            Arb.char('\u4E00'..'\u4FFF'),
-            Arb.char('\u5000'..'\u5FFF'),
-            Arb.char('\u6000'..'\u6FFF'),
-            Arb.char('\u7000'..'\u7FFF'),
-            Arb.char('\u8000'..'\u8FFF'),
-            Arb.char('\u9000'..'\u9FAF'),
-        ),
-    )
+private fun validTodoDescriptionArb() =
+    arbitrary {
+        // 有効な文字のArbitrary
+        val validChars =
+            Arb.choice(
+                // 半角英数字
+                Arb.char('a'..'z'),
+                Arb.char('A'..'Z'),
+                Arb.char('0'..'9'),
+                // ひらがな
+                Arb.char('\u3040'..'\u309F'),
+                // カタカナ(全角)
+                Arb.char('\u30A0'..'\u30FF'),
+                // カタカナ(半角)
+                Arb.char('\uFF65'..'\uFF9F'),
+                // 日本語漢字（一部）
+                Arb.choice(
+                    Arb.char('\u4E00'..'\u4FFF'),
+                    Arb.char('\u5000'..'\u5FFF'),
+                    Arb.char('\u6000'..'\u6FFF'),
+                    Arb.char('\u7000'..'\u7FFF'),
+                    Arb.char('\u8000'..'\u8FFF'),
+                    Arb.char('\u9000'..'\u9FAF'),
+                ),
+            )
 
-    val length = Arb.int(1..500).bind()
-    val chars = List(length) { validChars.bind() }
-    chars.joinToString("")
-}
+        val length = Arb.int(1..500).bind()
+        val chars = List(length) { validChars.bind() }
+        chars.joinToString("")
+    }

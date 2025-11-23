@@ -45,7 +45,8 @@ data class TodoEntity(
     companion object {
         fun fromDomainModel(todo: Todo): TodoEntity {
             return TodoEntity(
-                id = todo.id,
+                // 新規作成時（id=0）はnullを設定してHibernateに自動採番させる
+                id = if (todo.id == 0L) null else todo.id,
                 title = todo.title.value,
                 description = todo.description.value,
                 isCompleted = todo.isCompleted,

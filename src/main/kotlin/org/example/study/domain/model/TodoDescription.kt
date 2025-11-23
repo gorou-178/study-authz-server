@@ -30,7 +30,9 @@ data class TodoDescription private constructor(val value: String) {
         // - 記号: 一般的な記号を含む
         // - 改行: \n, \r
         private val ALLOWED_CHARACTERS_PATTERN =
-            Regex("^[a-zA-Z0-9\\u3040-\\u309F\\u30A0-\\u30FF\\uFF65-\\uFF9F\\u4E00-\\u9FAF !\"#\$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~　\\n\\r]+$")
+            Regex(
+                "^[a-zA-Z0-9\\u3040-\\u309F\\u30A0-\\u30FF\\uFF65-\\uFF9F\\u4E00-\\u9FAF !\"#\$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~　\\n\\r]+$",
+            )
 
         /**
          * TodoDescriptionを生成する

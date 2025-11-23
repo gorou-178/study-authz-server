@@ -81,52 +81,59 @@ class TodoPropertyTest : StringSpec({
 /**
  * TodoTitle用のArbitrary生成関数
  */
-private fun todoTitleArb(): Arb<TodoTitle> = arbitrary {
-    val title = listOf(
-        "Spring Bootの学習",
-        "Kotlinのテスト",
-        "API開発",
-        "データベース設計",
-        "認証機能の実装",
-        "Docker環境構築",
-        "テストコード作成",
-    ).random()
-    TodoTitle.of(title)
-}
+private fun todoTitleArb(): Arb<TodoTitle> =
+    arbitrary {
+        val title =
+            listOf(
+                "Spring Bootの学習",
+                "Kotlinのテスト",
+                "API開発",
+                "データベース設計",
+                "認証機能の実装",
+                "Docker環境構築",
+                "テストコード作成",
+            ).random()
+        TodoTitle.of(title)
+    }
 
 /**
  * TodoDescription用のArbitrary生成関数
  */
-private fun todoDescriptionArb(): Arb<TodoDescription> = arbitrary {
-    val description = listOf(
-        "Spring BootとKotlinでREST APIを作成する",
-        "OAuth2とKeycloakを使った認証・認可の実装",
-        "JUnitとMockKを使ったテストコードの作成",
-        "APIドキュメントとシステム設計書の作成",
-        "PostgreSQLとKeycloakのDocker環境構築",
-    ).random()
-    TodoDescription.of(description)
-}
+private fun todoDescriptionArb(): Arb<TodoDescription> =
+    arbitrary {
+        val description =
+            listOf(
+                "Spring BootとKotlinでREST APIを作成する",
+                "OAuth2とKeycloakを使った認証・認可の実装",
+                "JUnitとMockKを使ったテストコードの作成",
+                "APIドキュメントとシステム設計書の作成",
+                "PostgreSQLとKeycloakのDocker環境構築",
+            ).random()
+        TodoDescription.of(description)
+    }
 
 /**
  * Todo用のArbitrary生成関数
  */
-private fun todoArb(): Arb<Todo> = arbitrary {
-    val now = LocalDateTime.now()
-    val createdAt = now.minusDays(it.random.nextLong(0, 30))
-    val updatedAt = createdAt.plusDays(it.random.nextLong(0, 30))
-    val completedAt = if (it.random.nextBoolean()) {
-        updatedAt.plusDays(it.random.nextLong(0, 10))
-    } else {
-        null
-    }
+private fun todoArb(): Arb<Todo> =
+    arbitrary {
+        val now = LocalDateTime.now()
+        val createdAt = now.minusDays(it.random.nextLong(0, 30))
+        val updatedAt = createdAt.plusDays(it.random.nextLong(0, 30))
+        val completedAt =
+            if (it.random.nextBoolean()) {
+                updatedAt.plusDays(it.random.nextLong(0, 10))
+            } else {
+                null
+            }
 
-    Todo(
-        id = it.random.nextLong(1, 1000000),
-        title = todoTitleArb().bind(),
-        description = todoDescriptionArb().bind(),
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-        completedAt = completedAt,
-    )
-}
+        Todo(
+            id = it.random.nextLong(1, 1000000),
+            title = todoTitleArb().bind(),
+            description = todoDescriptionArb().bind(),
+            isCompleted = completedAt != null,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            completedAt = completedAt,
+        )
+    }

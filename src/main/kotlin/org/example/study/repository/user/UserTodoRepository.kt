@@ -10,23 +10,10 @@ import java.util.UUID
 
 @Repository
 interface UserTodoRepository : JpaRepository<UserTodoEntity, Long> {
-    fun findByUserIdOrderByIsCompletedAscCreatedAtDesc(userId: UUID): List<UserTodoEntity>
-
     fun findByUserIdOrderByIsCompletedAscCreatedAtDesc(
         userId: UUID,
         pageable: Pageable,
     ): Page<UserTodoEntity>
-}
-
-fun UserTodoRepository.findUserTodosSorted(userId: UUID): List<Todo> {
-    return findByUserIdOrderByIsCompletedAscCreatedAtDesc(userId).map { it.toDomainModel() }
-}
-
-fun UserTodoRepository.findUserTodosSorted(
-    userId: UUID,
-    pageable: Pageable,
-): Page<Todo> {
-    return findByUserIdOrderByIsCompletedAscCreatedAtDesc(userId, pageable).map { it.toDomainModel() }
 }
 
 fun UserTodoRepository.saveTodo(

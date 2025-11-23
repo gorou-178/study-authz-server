@@ -43,34 +43,38 @@ class TodoTitlePropertyTest : StringSpec({
     }
 
     "空文字列でTodoTitleを作成するとエラー" {
-        val exception = shouldThrow<IllegalArgumentException> {
-            TodoTitle.of("")
-        }
+        val exception =
+            shouldThrow<IllegalArgumentException> {
+                TodoTitle.of("")
+            }
         exception.message shouldContain "1文字以上"
     }
 
     "101文字以上のタイトルでTodoTitleを作成するとエラー" {
         checkAll(Arb.string(101..200)) { longTitle ->
-            val exception = shouldThrow<IllegalArgumentException> {
-                TodoTitle.of(longTitle)
-            }
+            val exception =
+                shouldThrow<IllegalArgumentException> {
+                    TodoTitle.of(longTitle)
+                }
             exception.message shouldContain "100文字以内"
         }
     }
 
     "先頭にスペースがあるタイトルでTodoTitleを作成するとエラー" {
         val titleWithLeadingSpace = " タイトル"
-        val exception = shouldThrow<IllegalArgumentException> {
-            TodoTitle.of(titleWithLeadingSpace)
-        }
+        val exception =
+            shouldThrow<IllegalArgumentException> {
+                TodoTitle.of(titleWithLeadingSpace)
+            }
         exception.message shouldContain "先頭・末尾にスペース"
     }
 
     "末尾にスペースがあるタイトルでTodoTitleを作成するとエラー" {
         val titleWithTrailingSpace = "タイトル "
-        val exception = shouldThrow<IllegalArgumentException> {
-            TodoTitle.of(titleWithTrailingSpace)
-        }
+        val exception =
+            shouldThrow<IllegalArgumentException> {
+                TodoTitle.of(titleWithTrailingSpace)
+            }
         exception.message shouldContain "先頭・末尾にスペース"
     }
 
@@ -144,31 +148,33 @@ class TodoTitlePropertyTest : StringSpec({
 /**
  * 有効なTodoTitle用のArbitrary生成関数
  */
-private fun validTodoTitleArb() = arbitrary {
-    // 有効な文字のArbitrary
-    val validChars = Arb.choice(
-        // 半角英数字
-        Arb.char('a'..'z'),
-        Arb.char('A'..'Z'),
-        Arb.char('0'..'9'),
-        // ひらがな
-        Arb.char('\u3040'..'\u309F'),
-        // カタカナ(全角)
-        Arb.char('\u30A0'..'\u30FF'),
-        // カタカナ(半角)
-        Arb.char('\uFF65'..'\uFF9F'),
-        // 日本語漢字（一部）
-        Arb.choice(
-            Arb.char('\u4E00'..'\u4FFF'),
-            Arb.char('\u5000'..'\u5FFF'),
-            Arb.char('\u6000'..'\u6FFF'),
-            Arb.char('\u7000'..'\u7FFF'),
-            Arb.char('\u8000'..'\u8FFF'),
-            Arb.char('\u9000'..'\u9FAF'),
-        ),
-    )
+private fun validTodoTitleArb() =
+    arbitrary {
+        // 有効な文字のArbitrary
+        val validChars =
+            Arb.choice(
+                // 半角英数字
+                Arb.char('a'..'z'),
+                Arb.char('A'..'Z'),
+                Arb.char('0'..'9'),
+                // ひらがな
+                Arb.char('\u3040'..'\u309F'),
+                // カタカナ(全角)
+                Arb.char('\u30A0'..'\u30FF'),
+                // カタカナ(半角)
+                Arb.char('\uFF65'..'\uFF9F'),
+                // 日本語漢字（一部）
+                Arb.choice(
+                    Arb.char('\u4E00'..'\u4FFF'),
+                    Arb.char('\u5000'..'\u5FFF'),
+                    Arb.char('\u6000'..'\u6FFF'),
+                    Arb.char('\u7000'..'\u7FFF'),
+                    Arb.char('\u8000'..'\u8FFF'),
+                    Arb.char('\u9000'..'\u9FAF'),
+                ),
+            )
 
-    val length = Arb.int(1..100).bind()
-    val chars = List(length) { validChars.bind() }
-    chars.joinToString("")
-}
+        val length = Arb.int(1..100).bind()
+        val chars = List(length) { validChars.bind() }
+        chars.joinToString("")
+    }
