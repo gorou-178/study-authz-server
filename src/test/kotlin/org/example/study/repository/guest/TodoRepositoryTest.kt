@@ -28,37 +28,41 @@ class TodoRepositoryTest {
         val twoDaysAgo = now.minusDays(2)
         val yesterday = now.minusDays(1)
 
-        val completedOldTodo = TodoEntity(
-            title = "完了した古いタスク",
-            description = "一週間前に作成",
-            isCompleted = true,
-            createdAt = oneWeekAgo,
-            updatedAt = oneWeekAgo,
-            completedAt = oneWeekAgo,
-        )
-        val incompleteTodo1 = TodoEntity(
-            title = "未完了タスク1",
-            description = "2日前に作成",
-            isCompleted = false,
-            createdAt = twoDaysAgo,
-            updatedAt = twoDaysAgo,
-            completedAt = null,
-        )
-        val incompleteTodo2 = TodoEntity(
-            title = "未完了タスク2",
-            description = "昨日作成",
-            isCompleted = false,
-            createdAt = yesterday,
-            updatedAt = yesterday,
-            completedAt = null,
-        )
+        val completedOldTodo =
+            TodoEntity(
+                title = "完了した古いタスク",
+                description = "一週間前に作成",
+                isCompleted = true,
+                createdAt = oneWeekAgo,
+                updatedAt = oneWeekAgo,
+                completedAt = oneWeekAgo,
+            )
+        val incompleteTodo1 =
+            TodoEntity(
+                title = "未完了タスク1",
+                description = "2日前に作成",
+                isCompleted = false,
+                createdAt = twoDaysAgo,
+                updatedAt = twoDaysAgo,
+                completedAt = null,
+            )
+        val incompleteTodo2 =
+            TodoEntity(
+                title = "未完了タスク2",
+                description = "昨日作成",
+                isCompleted = false,
+                createdAt = yesterday,
+                updatedAt = yesterday,
+                completedAt = null,
+            )
 
         todoRepository.saveAll(listOf(completedOldTodo, incompleteTodo1, incompleteTodo2))
 
         // When
-        val result = todoRepository.findAllByCreatedAtAfterOrderByIsCompletedAscCreatedAtDesc(
-            oneWeekAgo.minusDays(1),
-        )
+        val result =
+            todoRepository.findAllByCreatedAtAfterOrderByIsCompletedAscCreatedAtDesc(
+                oneWeekAgo.minusDays(1),
+            )
 
         // Then
         assertThat(result).hasSize(3)
@@ -78,29 +82,32 @@ class TodoRepositoryTest {
         val twoMonthsAgo = now.minusMonths(2)
         val oneWeekAgo = now.minusWeeks(1)
 
-        val oldTodo = TodoEntity(
-            title = "古いタスク",
-            description = "2ヶ月前に作成",
-            isCompleted = false,
-            createdAt = twoMonthsAgo,
-            updatedAt = twoMonthsAgo,
-            completedAt = null,
-        )
-        val recentTodo = TodoEntity(
-            title = "新しいタスク",
-            description = "1週間前に作成",
-            isCompleted = false,
-            createdAt = oneWeekAgo,
-            updatedAt = oneWeekAgo,
-            completedAt = null,
-        )
+        val oldTodo =
+            TodoEntity(
+                title = "古いタスク",
+                description = "2ヶ月前に作成",
+                isCompleted = false,
+                createdAt = twoMonthsAgo,
+                updatedAt = twoMonthsAgo,
+                completedAt = null,
+            )
+        val recentTodo =
+            TodoEntity(
+                title = "新しいタスク",
+                description = "1週間前に作成",
+                isCompleted = false,
+                createdAt = oneWeekAgo,
+                updatedAt = oneWeekAgo,
+                completedAt = null,
+            )
 
         todoRepository.saveAll(listOf(oldTodo, recentTodo))
 
         // When
-        val result = todoRepository.findAllByCreatedAtAfterOrderByIsCompletedAscCreatedAtDesc(
-            now.minusMonths(1),
-        )
+        val result =
+            todoRepository.findAllByCreatedAtAfterOrderByIsCompletedAscCreatedAtDesc(
+                now.minusMonths(1),
+            )
 
         // Then
         assertThat(result).hasSize(1)
@@ -115,22 +122,24 @@ class TodoRepositoryTest {
         val twoMonthsAgo = now.minusMonths(2)
         val twoDaysAgo = now.minusDays(2)
 
-        val oldTodo = TodoEntity(
-            title = "2ヶ月前のタスク",
-            description = "古いタスク",
-            isCompleted = false,
-            createdAt = twoMonthsAgo,
-            updatedAt = twoMonthsAgo,
-            completedAt = null,
-        )
-        val recentTodo = TodoEntity(
-            title = "最近のタスク",
-            description = "2日前のタスク",
-            isCompleted = false,
-            createdAt = twoDaysAgo,
-            updatedAt = twoDaysAgo,
-            completedAt = null,
-        )
+        val oldTodo =
+            TodoEntity(
+                title = "2ヶ月前のタスク",
+                description = "古いタスク",
+                isCompleted = false,
+                createdAt = twoMonthsAgo,
+                updatedAt = twoMonthsAgo,
+                completedAt = null,
+            )
+        val recentTodo =
+            TodoEntity(
+                title = "最近のタスク",
+                description = "2日前のタスク",
+                isCompleted = false,
+                createdAt = twoDaysAgo,
+                updatedAt = twoDaysAgo,
+                completedAt = null,
+            )
 
         todoRepository.saveAll(listOf(oldTodo, recentTodo))
 
@@ -157,14 +166,15 @@ class TodoRepositoryTest {
     fun findTodosWithinLastMonth_returnsEmptyListWhenOnlyOldTodos() {
         // Given
         val twoMonthsAgo = LocalDateTime.now().minusMonths(2)
-        val oldTodo = TodoEntity(
-            title = "古いタスク",
-            description = "2ヶ月前のタスク",
-            isCompleted = false,
-            createdAt = twoMonthsAgo,
-            updatedAt = twoMonthsAgo,
-            completedAt = null,
-        )
+        val oldTodo =
+            TodoEntity(
+                title = "古いタスク",
+                description = "2ヶ月前のタスク",
+                isCompleted = false,
+                createdAt = twoMonthsAgo,
+                updatedAt = twoMonthsAgo,
+                completedAt = null,
+            )
 
         todoRepository.save(oldTodo)
 

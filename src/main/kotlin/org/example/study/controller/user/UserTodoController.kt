@@ -1,6 +1,8 @@
 package org.example.study.controller.user
 
+import com.github.michaelbull.result.map
 import jakarta.validation.Valid
+import org.example.study.controller.toResponseEntity
 import org.example.study.dto.user.CreateUserTodoRequest
 import org.example.study.dto.user.PagedUserTodoResponse
 import org.example.study.dto.user.UserTodoResponse
@@ -38,18 +40,13 @@ class UserTodoController(
     fun createUserTodo(
         @PathVariable userId: UUID,
         @Valid @RequestBody request: CreateUserTodoRequest,
-    ): ResponseEntity<UserTodoResponse> {
+    ): ResponseEntity<*> {
         return createUserTodoUseCase.execute(
             userId = userId,
             title = request.title!!,
             description = request.description!!,
-        ).fold(
-            onSuccess = { todo ->
-                ResponseEntity.status(HttpStatus.CREATED).body(UserTodoResponse.from(todo))
-            },
-            onFailure = {
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-            },
-        )
+        ).map { todo ->
+            UserTodoResponse.from(todo)
+        }.toResponseEntity(HttpStatus.CREATED)
     }
 }

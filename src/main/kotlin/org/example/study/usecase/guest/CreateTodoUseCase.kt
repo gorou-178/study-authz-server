@@ -1,5 +1,9 @@
 package org.example.study.usecase.guest
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
+import org.example.study.domain.error.AppError
 import org.example.study.domain.model.Todo
 import org.example.study.domain.model.TodoDescription
 import org.example.study.domain.model.TodoTitle
@@ -14,8 +18,8 @@ class CreateTodoUseCase(
     fun execute(
         title: String,
         description: String,
-    ): Result<Todo> {
-        return runCatching {
+    ): Result<Todo, AppError> {
+        return try {
             // 入力のサニタイゼーション（トリミング）
             val sanitizedTitle = title.trim()
             val sanitizedDescription = description.trim()
@@ -40,7 +44,13 @@ class CreateTodoUseCase(
             // Entityに変換して保存
             val entity = org.example.study.repository.guest.entity.TodoEntity.fromDomainModel(newTodo)
             val savedEntity = todoRepository.save(entity)
-            savedEntity.toDomainModel()
+            Ok(savedEntity.toDomainModel())
+        } catch (e: IllegalArgumentException) {
+            // バリデーションエラー（値オブジェクトのof()で発生）
+            Err(AppError.ClientError.ValidationError(e.message ?: "Invalid input", e))
+        } catch (e: Exception) {
+            // データベースエラーやその他の予期しないエラー
+            Err(AppError.ServerError.DatabaseError("Failed to create todo", e))
         }
     }
 }

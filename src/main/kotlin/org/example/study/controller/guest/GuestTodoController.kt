@@ -1,6 +1,8 @@
 package org.example.study.controller.guest
 
+import com.github.michaelbull.result.map
 import jakarta.validation.Valid
+import org.example.study.controller.toResponseEntity
 import org.example.study.dto.guest.CreateTodoRequest
 import org.example.study.dto.guest.TodoResponse
 import org.example.study.usecase.guest.CreateTodoUseCase
@@ -20,29 +22,21 @@ class GuestTodoController(
     private val createTodoUseCase: CreateTodoUseCase,
 ) {
     @GetMapping("/todos")
-    fun getTodo(): ResponseEntity<List<TodoResponse>> {
+    fun getTodo(): ResponseEntity<*> {
         return getTodoUseCase.execute()
             .map { todos -> todos.map { TodoResponse.from(it) } }
-            .fold(
-                onSuccess = { ResponseEntity.ok(it) },
-                onFailure = { ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(emptyList()) },
-            )
+            .toResponseEntity()
     }
 
     @PostMapping("/todos")
     fun createTodo(
         @Valid @RequestBody request: CreateTodoRequest,
-    ): ResponseEntity<TodoResponse> {
+    ): ResponseEntity<*> {
         return createTodoUseCase.execute(
             title = request.title!!,
             description = request.description!!,
-        ).fold(
-            onSuccess = { todo ->
-                ResponseEntity.status(HttpStatus.CREATED).body(TodoResponse.from(todo))
-            },
-            onFailure = {
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-            },
-        )
+        ).map { todo ->
+            TodoResponse.from(todo)
+        }.toResponseEntity(HttpStatus.CREATED)
     }
 }

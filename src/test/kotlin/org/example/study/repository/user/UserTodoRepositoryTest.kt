@@ -35,33 +35,36 @@ class UserTodoRepositoryTest {
         val yesterday = now.minusDays(1)
         val twoDaysAgo = now.minusDays(2)
 
-        val completedTodo = UserTodoEntity(
-            userId = testUserId,
-            title = "完了タスク",
-            description = "完了済み",
-            isCompleted = true,
-            createdAt = twoDaysAgo,
-            updatedAt = twoDaysAgo,
-            completedAt = twoDaysAgo,
-        )
-        val incompleteTodo1 = UserTodoEntity(
-            userId = testUserId,
-            title = "未完了タスク1",
-            description = "昨日作成",
-            isCompleted = false,
-            createdAt = yesterday,
-            updatedAt = yesterday,
-            completedAt = null,
-        )
-        val incompleteTodo2 = UserTodoEntity(
-            userId = testUserId,
-            title = "未完了タスク2",
-            description = "今日作成",
-            isCompleted = false,
-            createdAt = now,
-            updatedAt = now,
-            completedAt = null,
-        )
+        val completedTodo =
+            UserTodoEntity(
+                userId = testUserId,
+                title = "完了タスク",
+                description = "完了済み",
+                isCompleted = true,
+                createdAt = twoDaysAgo,
+                updatedAt = twoDaysAgo,
+                completedAt = twoDaysAgo,
+            )
+        val incompleteTodo1 =
+            UserTodoEntity(
+                userId = testUserId,
+                title = "未完了タスク1",
+                description = "昨日作成",
+                isCompleted = false,
+                createdAt = yesterday,
+                updatedAt = yesterday,
+                completedAt = null,
+            )
+        val incompleteTodo2 =
+            UserTodoEntity(
+                userId = testUserId,
+                title = "未完了タスク2",
+                description = "今日作成",
+                isCompleted = false,
+                createdAt = now,
+                updatedAt = now,
+                completedAt = null,
+            )
 
         userTodoRepository.saveAll(listOf(completedTodo, incompleteTodo1, incompleteTodo2))
 
@@ -84,24 +87,26 @@ class UserTodoRepositoryTest {
     fun findByUserIdOrderByIsCompletedAscCreatedAtDesc_filtersCorrectUser() {
         // Given
         val now = LocalDateTime.now()
-        val userTodo = UserTodoEntity(
-            userId = testUserId,
-            title = "ユーザー1のタスク",
-            description = "テストユーザー",
-            isCompleted = false,
-            createdAt = now,
-            updatedAt = now,
-            completedAt = null,
-        )
-        val anotherUserTodo = UserTodoEntity(
-            userId = anotherUserId,
-            title = "ユーザー2のタスク",
-            description = "別のユーザー",
-            isCompleted = false,
-            createdAt = now,
-            updatedAt = now,
-            completedAt = null,
-        )
+        val userTodo =
+            UserTodoEntity(
+                userId = testUserId,
+                title = "ユーザー1のタスク",
+                description = "テストユーザー",
+                isCompleted = false,
+                createdAt = now,
+                updatedAt = now,
+                completedAt = null,
+            )
+        val anotherUserTodo =
+            UserTodoEntity(
+                userId = anotherUserId,
+                title = "ユーザー2のタスク",
+                description = "別のユーザー",
+                isCompleted = false,
+                createdAt = now,
+                updatedAt = now,
+                completedAt = null,
+            )
 
         userTodoRepository.saveAll(listOf(userTodo, anotherUserTodo))
 
@@ -120,24 +125,26 @@ class UserTodoRepositoryTest {
     fun findByUserIdOrderByIsCompletedAscCreatedAtDesc_paginationWorks() {
         // Given
         val now = LocalDateTime.now()
-        val todos = (1..25).map { i ->
-            UserTodoEntity(
-                userId = testUserId,
-                title = "タスク$i",
-                description = "説明$i",
-                isCompleted = false,
-                createdAt = now.minusDays(i.toLong()),
-                updatedAt = now.minusDays(i.toLong()),
-                completedAt = null,
-            )
-        }
+        val todos =
+            (1..25).map { i ->
+                UserTodoEntity(
+                    userId = testUserId,
+                    title = "タスク$i",
+                    description = "説明$i",
+                    isCompleted = false,
+                    createdAt = now.minusDays(i.toLong()),
+                    updatedAt = now.minusDays(i.toLong()),
+                    completedAt = null,
+                )
+            }
         userTodoRepository.saveAll(todos)
 
         // When - 1ページ目
-        val page0 = userTodoRepository.findByUserIdOrderByIsCompletedAscCreatedAtDesc(
-            testUserId,
-            PageRequest.of(0, 10),
-        )
+        val page0 =
+            userTodoRepository.findByUserIdOrderByIsCompletedAscCreatedAtDesc(
+                testUserId,
+                PageRequest.of(0, 10),
+            )
 
         // Then
         assertThat(page0.content).hasSize(10)
@@ -148,10 +155,11 @@ class UserTodoRepositoryTest {
         assertThat(page0.hasPrevious()).isFalse
 
         // When - 2ページ目
-        val page1 = userTodoRepository.findByUserIdOrderByIsCompletedAscCreatedAtDesc(
-            testUserId,
-            PageRequest.of(1, 10),
-        )
+        val page1 =
+            userTodoRepository.findByUserIdOrderByIsCompletedAscCreatedAtDesc(
+                testUserId,
+                PageRequest.of(1, 10),
+            )
 
         // Then
         assertThat(page1.content).hasSize(10)
@@ -160,10 +168,11 @@ class UserTodoRepositoryTest {
         assertThat(page1.hasPrevious()).isTrue
 
         // When - 3ページ目（最後のページ）
-        val page2 = userTodoRepository.findByUserIdOrderByIsCompletedAscCreatedAtDesc(
-            testUserId,
-            PageRequest.of(2, 10),
-        )
+        val page2 =
+            userTodoRepository.findByUserIdOrderByIsCompletedAscCreatedAtDesc(
+                testUserId,
+                PageRequest.of(2, 10),
+            )
 
         // Then
         assertThat(page2.content).hasSize(5)
@@ -190,15 +199,16 @@ class UserTodoRepositoryTest {
     fun saveTodo_savesNewTodo() {
         // Given
         val now = LocalDateTime.now()
-        val newTodo = Todo(
-            id = 0L,
-            title = TodoTitle.of("新しいタスク"),
-            description = TodoDescription.of("テスト用のタスク"),
-            isCompleted = false,
-            createdAt = now,
-            updatedAt = now,
-            completedAt = null,
-        )
+        val newTodo =
+            Todo(
+                id = 0L,
+                title = TodoTitle.of("新しいタスク"),
+                description = TodoDescription.of("テスト用のタスク"),
+                isCompleted = false,
+                createdAt = now,
+                updatedAt = now,
+                completedAt = null,
+            )
 
         // When
         val savedTodo = userTodoRepository.saveTodo(testUserId, newTodo)
@@ -219,26 +229,28 @@ class UserTodoRepositoryTest {
     fun saveTodo_updatesExistingTodo() {
         // Given
         val now = LocalDateTime.now()
-        val entity = UserTodoEntity(
-            userId = testUserId,
-            title = "元のタイトル",
-            description = "元の説明",
-            isCompleted = false,
-            createdAt = now,
-            updatedAt = now,
-            completedAt = null,
-        )
+        val entity =
+            UserTodoEntity(
+                userId = testUserId,
+                title = "元のタイトル",
+                description = "元の説明",
+                isCompleted = false,
+                createdAt = now,
+                updatedAt = now,
+                completedAt = null,
+            )
         val savedEntity = userTodoRepository.save(entity)
 
-        val updatedTodo = Todo(
-            id = savedEntity.id!!,
-            title = TodoTitle.of("更新後のタイトル"),
-            description = TodoDescription.of("更新後の説明"),
-            isCompleted = true,
-            createdAt = now,
-            updatedAt = now.plusHours(1),
-            completedAt = now.plusHours(1),
-        )
+        val updatedTodo =
+            Todo(
+                id = savedEntity.id!!,
+                title = TodoTitle.of("更新後のタイトル"),
+                description = TodoDescription.of("更新後の説明"),
+                isCompleted = true,
+                createdAt = now,
+                updatedAt = now.plusHours(1),
+                completedAt = now.plusHours(1),
+            )
 
         // When
         val updatedResult = userTodoRepository.saveTodo(testUserId, updatedTodo)
@@ -260,15 +272,16 @@ class UserTodoRepositoryTest {
     fun saveTodo_autoGeneratesIdForNewTodo() {
         // Given
         val now = LocalDateTime.now()
-        val newTodo = Todo(
-            id = 0L,
-            title = TodoTitle.of("新規タスク"),
-            description = TodoDescription.of("ID自動採番テスト"),
-            isCompleted = false,
-            createdAt = now,
-            updatedAt = now,
-            completedAt = null,
-        )
+        val newTodo =
+            Todo(
+                id = 0L,
+                title = TodoTitle.of("新規タスク"),
+                description = TodoDescription.of("ID自動採番テスト"),
+                isCompleted = false,
+                createdAt = now,
+                updatedAt = now,
+                completedAt = null,
+            )
 
         // When
         val savedTodo = userTodoRepository.saveTodo(testUserId, newTodo)

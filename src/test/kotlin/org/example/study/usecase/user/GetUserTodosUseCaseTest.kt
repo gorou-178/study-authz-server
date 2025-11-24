@@ -4,9 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.example.study.domain.model.Todo
-import org.example.study.domain.model.TodoDescription
-import org.example.study.domain.model.TodoTitle
 import org.example.study.repository.user.UserTodoRepository
 import org.example.study.repository.user.entity.UserTodoEntity
 import org.junit.jupiter.api.BeforeEach
